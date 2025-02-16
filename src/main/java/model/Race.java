@@ -2,29 +2,33 @@ package model;
 
 import util.RandomUtil;
 
-import java.util.*;
+import java.util.List;
 
 public class Race {
-    private List<Car> carList;
+    private final List<Car> carList;
 
-    public Race() {
-    }
-
-    public Race(String[] names) {
-        this.carList = Arrays.stream(names)
+    public Race(List<String> nameList) {
+        this.carList = nameList.stream()
                 .map(Car::new)
                 .toList();
     }
 
-    public void racing() {
+    public void run() {
         for (Car car : carList) {
-            moveEachCar(car);
+            car.move(RandomUtil.generateRandomNumber());
         }
     }
 
-    public void moveEachCar(Car car) {
-        int randomNumber = RandomUtil.generateRandomNumber();
-        car.moveForward(randomNumber);
+    public List<String> getRaceWinner() {
+        int max = carList.stream()
+                .mapToInt(Car::getPosition)
+                .max()
+                .orElse(0);
+
+        return carList.stream()
+                .filter(car -> car.getPosition() == max)
+                .map(Car::getName)
+                .toList();
     }
 
     public List<Car> getCarList() {
